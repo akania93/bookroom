@@ -1,0 +1,72 @@
+<div id="Main" class="container-fluid p-0">
+
+  <!-- <nav-bar></nav-bar> -->
+  <nav id="MainNavbar" class="navbar navbar-expand-sm navbar-light">
+
+    <a class="navbar-brand" routerLink="/">
+      <span class="navbar-app-name">{{title}}</span>
+      <img src="favicon.ico" class="d-inline-block align-top ml-3" alt="">
+    </a>
+
+    <button class="navbar-toggler navbar-toggler-right" type="button" 
+      data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+      [attr.aria-expanded]="!isCollapsed" (click)="toggleMenu()"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent" [ngbCollapse]="isCollapsed">
+      <div class="navbar-nav mr-auto">
+        <a class="nav-item nav-link active" routerLink="/login" routerLinkActive="active">
+          Home <span class="sr-only">(current)</span>
+        </a>
+        <a class="nav-item nav-link" routerLink="/" routerLinkActive="active">Features</a>
+      </div>
+
+      <button type="button" class="btn button-rounded button-pink mr-3">Post an adv</button>
+      <button mdbBtn type="button" color="pink" mdbWavesEffect>Pink button</button>
+      
+
+      <div ngbDropdown class="d-inline-block nav-item dropdown">
+        <!-- <button class="btn btn-link" id="dropdownBasic1" ngbDropdownToggle>Toggle dropdown</button> -->
+        <div id="dropdownBasic1" ngbDropdownToggle>
+          <img src="favicon.ico" alt="profile image" height="40" width="40">
+          <span class="pl-2">Name Surname</span>
+        </div>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <button ngbDropdownItem routerLink="/">Action - 1</button>
+          <button ngbDropdownItem routerLink="/login">Back to Login action</button>
+        </div>
+      </div>
+
+    </div>
+
+    
+
+  </nav>
+  <!-- <nav-bar></nav-bar> -->
+
+  <div id="MainContent" class="container">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Footer -->
+  <footer id="MainFooter" class="page-footer font-small">
+    <div class="footer-copyright text-center py-3">© {{currentDate}} Copyright:
+      <a href="https://github.com/akania93" target="_blank"> arka</a>
+      <div class="footer-icons">
+        <a href="https://arturkania.wordpress.com/" target="_blank">
+          <i class="fa fa-home"> </i>
+        </a>
+        <a href="https://www.linkedin.com/in/artur-kania-9560a5112/" target="_blank">
+          <i class="fa fa-linkedin"></i>
+        </a>
+        <a href="https://github.com/akania93" target="_blank">
+          <i class="fa fa-github"> </i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</div>
