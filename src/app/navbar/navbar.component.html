@@ -1,0 +1,69 @@
+<mdb-navbar id="MainNavbar" SideClass="navbar navbar-expand-md navbar-light" [containerInside]="false">
+
+    <!-- Navbar brand -->
+    <mdb-navbar-brand>
+        <a class="navbar-brand" routerLink="/">
+            <span class="navbar-app-name">{{brandName}}</span>
+            <img src="favicon.ico" class="d-inline-block align-top ml-3" alt="">
+        </a>
+    </mdb-navbar-brand>
+
+    <links>
+
+        <!-- Div do wyświetlenia na mobile -->
+
+        <!-- <div class="navbar-nav mr-auto d-md-none">
+            <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" alt="" width="55" height="55"
+                class="img-fluid rounded-circle z-depth-0">
+            <a class="nav-item nav-link active" routerLink="/" routerLinkActive="active">My Account <span
+                    class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" routerLink="/" routerLinkActive="active">Logout</a>
+        </div> -->
+
+        <ul class="navbar-nav mr-auto align-items-md-center">
+            <li class="nav-item active">
+                <a class="nav-link waves-light" routerLink="/" routerLinkActive="active" mdbWavesEffect>Home<span
+                        class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link waves-light" routerLink="/" routerLinkActive="active" mdbWavesEffect>Features</a>
+            </li>
+
+            <li class="nav-item dropdown" dropdown>
+                <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light"
+                    mdbWavesEffect>
+                    Basic dropdown<span class="caret"></span></a>
+                <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
+                    <a class="dropdown-item waves-light" mdbWavesEffect routerLink="/">Action</a>
+                    <a class="dropdown-item waves-light" mdbWavesEffect routerLink="/">Another action</a>
+                    <div class="divider dropdown-divider"></div>
+                    <a class="dropdown-item waves-light" mdbWavesEffect routerLink="/">Separated link</a>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto nav-flex-icons align-items-md-center">
+            <li class="nav-item">
+                <button routerLink="/sign" mdbBtn type="button" color="purple" class="btn-rounded">Zaloguj</button>
+            </li>
+
+            <li *ngIf="currentUser" class="nav-item">
+                <button mdbBtn type="button" color="pink" class="btn-rounded">Dodaj ogłoszenie</button>
+            </li>
+
+            <li *ngIf="currentUser" class="nav-item avatar dropdown" dropdown>
+                <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light"
+                    mdbWavesEffect>
+                    <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" alt="" width="55" height="55"
+                        class="img-fluid rounded-circle z-depth-0">
+                </a>
+                <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
+                    <a class="dropdown-item waves-light" mdbWavesEffect routerLink="/account">My account</a>
+                    <a class="dropdown-item waves-light" mdbWavesEffect routerLink="/">Log out</a>
+                </div>
+            </li>
+        </ul>
+    </links>
+
+</mdb-navbar>
+<!--/.Navbar-->

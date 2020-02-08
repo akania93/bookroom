@@ -1,0 +1,62 @@
+<div class="card-group">
+    <div class="card p-4">
+        <div class="card-body">
+            <form name="form">
+                <div style="padding-top: 20px;" class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-at"></i></span>
+                    </div>
+                    <input [(ngModel)]="credentials.email" type="email" name="UserName" class="form-control sty1"
+                        placeholder="Email" required>
+                </div>
+                <div class="input-group mb-4">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                    </div>
+                    <input [(ngModel)]="credentials.password" type="password" name="Passward" class="form-control"
+                        placeholder="Password">
+                </div>
+                <div>
+                    <p style="color:#E92626;font-size:20px;font-weight:normal" Class="success" align="left">
+                        {{errorMessage}}
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        Already have an account?
+                        <button type="submit" routerLink="/sign" class="btn btn-primary px-4">Login</button>
+                    </div>
+
+                    <div class="col-4">
+                        <button type="submit" (click)="signUp(socialLoginType.Email)"
+                            class="btn btn-secondary px-4">Register</button>
+                    </div>
+                    <div class="col-4 text-right">
+                        <button type="button" routerLink="/sign/forgot" class="btn btn-link px-0 fs-14">Forgot password?</button>
+                    </div>
+
+                </div>
+            </form>
+
+            <!-- PODGLĄD -->
+            <p class="fs-12">{{ registerInfo }}</p>
+            <!-- PODGLĄD -->
+
+            <hr style="border-top: 1px solid #eee;">
+
+            <div class="row">
+                <div class="col-6">
+                    <button (click)="signUp(socialLoginType.Facebook)" class="loginBtn loginBtn--facebook">
+                        Register with Facebook
+                    </button>
+                </div>
+                <div class="col-6 text-right">
+                    <button (click)="signUp(socialLoginType.Google)" class="loginBtn loginBtn--google">
+                        Register with Google
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
