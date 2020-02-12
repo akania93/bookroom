@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AppComponent } from './app.component';
 import { SignComponent } from './login-and-register/sign.component';
 import { SignInComponent } from './login-and-register/sign-in.component';
@@ -14,7 +15,7 @@ import { environment } from 'src/environments/environment';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { NavbarComponent } from './navbar/navbar.component';
 import { AccountComponent } from './account/account.component';
-import { AuthService } from './auth.service';
+import { AuthService } from './shared/services/auth.service';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import { AuthService } from './auth.service';
     FormsModule,
     AppRoutingModule,
     AngularFireAuthModule,
+    AngularFirestoreModule,
     MDBBootstrapModule.forRoot()
   ],
   providers: [

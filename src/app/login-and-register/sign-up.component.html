@@ -1,8 +1,11 @@
 <div class="card-group">
     <div class="card p-4">
         <div class="card-body">
+
+            <h4 class="card-title text-center">Get started for free</h4>
+
             <form name="form">
-                <div style="padding-top: 20px;" class="input-group mb-3">
+                <div class="input-group mb-3 pt-4">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-at"></i></span>
                     </div>
@@ -21,42 +24,30 @@
                         {{errorMessage}}
                     </p>
                 </div>
+
                 <div class="row">
-                    <div class="col-4">
-                        Already have an account?
-                        <button type="submit" routerLink="/sign" class="btn btn-primary px-4">Login</button>
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn-rounded btn btn-pink" color="pink"
+                            (click)="signUp()" style="width: 50%;">
+                            Register
+                        </button>
                     </div>
 
-                    <div class="col-4">
-                        <button type="submit" (click)="signUp(socialLoginType.Email)"
-                            class="btn btn-secondary px-4">Register</button>
-                    </div>
-                    <div class="col-4 text-right">
-                        <button type="button" routerLink="/sign/forgot" class="btn btn-link px-0 fs-14">Forgot password?</button>
+                    <div class="col-12 text-center mt-4">
+                        <span class="fs-14">Already have an account?</span>
+                        <button type="button" class="btn btn-link pink-text px-2 m-0 py-0"
+                        routerLink="/sign">Sign In</button>
                     </div>
 
+                    <hr class="style1">
+
+                    <div class="col-12 text-center">
+                        <button type="button" routerLink="/sign/forgot" class="btn btn-link pink-text py-0 m-0"
+                        >Forgot password?</button>
+                    </div>
                 </div>
             </form>
-
-            <!-- PODGLĄD -->
-            <p class="fs-12">{{ registerInfo }}</p>
-            <!-- PODGLĄD -->
-
-            <hr style="border-top: 1px solid #eee;">
-
-            <div class="row">
-                <div class="col-6">
-                    <button (click)="signUp(socialLoginType.Facebook)" class="loginBtn loginBtn--facebook">
-                        Register with Facebook
-                    </button>
-                </div>
-                <div class="col-6 text-right">
-                    <button (click)="signUp(socialLoginType.Google)" class="loginBtn loginBtn--google">
-                        Register with Google
-                    </button>
-                </div>
-            </div>
-
+            
         </div>
     </div>
 </div>

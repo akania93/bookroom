@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService, Credentials } from '../shared/services/auth.service';
 import { Router } from '@angular/router';
 
-enum SocialLoginType { Email, Facebook, Google }
+enum LoginType { Email, Facebook, Google }
 
 @Component({
   selector: 'bookr-sign-in',
@@ -10,26 +10,42 @@ enum SocialLoginType { Email, Facebook, Google }
 })
 export class SignInComponent implements OnInit {
 
-  credentials = {
+  credentials: Credentials = {
     email: '',
     password: ''
   };
-  registerInfo = '';
-  socialLoginType = SocialLoginType;
+  errorMessage = '';
+  loginType = LoginType;
 
   constructor(private router: Router, private authService: AuthService) { }
 
-  signIn(type: SocialLoginType) {
-    if (type === SocialLoginType.Email) {
+  signIn(type: LoginType) {
+    if (type === LoginType.Email) {
 
       this.authService.login(this.credentials)
-      .then(() => this.router.navigate(['/']))
-      .catch(err => console.log(err.message));
-      
-    } else if (type === SocialLoginType.Facebook) {
-      console.log("facebook login");
-    } else if (type === SocialLoginType.Google) {
-      console.log("google login");
+        // .then(() => (console.log("then 2")))
+        .catch((err) => {
+          if (err.code === "auth/user-not-found") {
+            this.errorMessage = "Nie znaleziono użytkownika. Konto mogło zostać usunięte.";
+          } else {
+            this.errorMessage = err.message;
+          }
+        });
+
+
+    } else if (type === LoginType.Facebook) {
+      this.authService.doFacebookLogin()
+        .catch((err) => {
+          this.errorMessage = err.message;
+        });
+
+    } else if (type === LoginType.Google) {
+
+      this.authService.doGoogleLogin()
+        .catch((err) => {
+          this.errorMessage = err.message;
+        });
+
     } else {
       console.warn("Nieznana metoda logowania");
     }
