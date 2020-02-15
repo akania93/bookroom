@@ -1,7 +1,11 @@
 export interface AppUser {
     uid: string;
-    email: string;
+    providerId: string;
     displayName: string;
-    photoURL: string;
-    emailVerified: boolean;
+    image: string;
+    email: string;
+    emailVerified?: boolean;
+    phoneNumber: string;
+    // lastLoginAt: string;
+    // createdAt: string;
 }

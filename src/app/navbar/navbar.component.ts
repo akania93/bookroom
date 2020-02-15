@@ -15,8 +15,8 @@ export class NavbarComponent implements OnInit {
   @Input() brandName: string;
 
   currentUser: User;
-  appUser: AppUser;
-  emptyPhotoURL = "https://cdn2.iconfinder.com/data/icons/user-icon-2-1/100/user_5-15-512.png";
+  // localStorageUser: AppUser;
+  emptyPhotoURL = "assets/image/facebook-profile-photo.jpg";
   photoUrl;
 
   constructor(private authService: AuthService, private router: Router) { }
@@ -31,7 +31,7 @@ export class NavbarComponent implements OnInit {
       (value) => {
 
         this.currentUser = value;
-        this.appUser = this.authService.appUser;
+        // this.localStorageUser = this.authService.localStorageUser;
         this.photoUrl = (this.currentUser !== null && this.currentUser.photoURL !== null)
           ? this.currentUser.photoURL : this.emptyPhotoURL;
 

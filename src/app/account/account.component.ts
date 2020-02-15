@@ -10,8 +10,13 @@ import { AppUser } from '../shared/interfaces/user';
 })
 export class AccountComponent implements OnInit {
 
-  user = this.authService.user;
-  appUser: AppUser = this.authService.appUser;
+  // user = this.authService.user;
+  localStorageUser = this.authService.localStorageUser;
+  emptyPhotoURL = "assets/image/facebook-profile-photo.jpg";
+  
+  name = this.localStorageUser["name"];
+  createdAt = this.localStorageUser["createdAt"];
+  lastLoginAt = this.localStorageUser["lastLoginAt"];
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -21,6 +26,7 @@ export class AccountComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
 }

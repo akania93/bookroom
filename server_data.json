@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "test1"
+    },
+    {
+      "id": 2,
+      "name": "test2"
+    },
+    {
+      "uid": "0McgeyJG1jUwtV8asplMmtWMc1P2",
+      "providerId": "facebook.com",
+      "displayName": "Artur Kania",
+      "image": "https://graph.facebook.com/2676667775742847/picture",
+      "email": "arczi004@gmail.com",
+      "emailVerified": false,
+      "phoneNumber": null,
+      "id": 3
+    }
+  ]
+}

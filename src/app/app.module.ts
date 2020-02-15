@@ -16,6 +16,9 @@ import { MDBBootstrapModule } from 'angular-bootstrap-md';
 import { NavbarComponent } from './navbar/navbar.component';
 import { AccountComponent } from './account/account.component';
 import { AuthService } from './shared/services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+import { AccountDetailsComponent } from './account/account-details.component';
+import { AccountAdvertisementsComponent } from './account/account-advertisements.component';
 
 
 @NgModule({
@@ -27,8 +30,10 @@ import { AuthService } from './shared/services/auth.service';
     ForgotPasswordComponent,
     DashboardComponent,
     NavbarComponent,
-    AccountComponent
-    
+    AccountComponent,
+    AccountDetailsComponent,
+    AccountAdvertisementsComponent
+
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -37,7 +42,8 @@ import { AuthService } from './shared/services/auth.service';
     AppRoutingModule,
     AngularFireAuthModule,
     AngularFirestoreModule,
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    HttpClientModule
   ],
   providers: [
     AuthService
