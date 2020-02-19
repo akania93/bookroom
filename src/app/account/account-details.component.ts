@@ -12,11 +12,31 @@ export class AccountDetailsComponent implements OnInit {
 
   localStorageUser: AppUser = this.authService.localStorageUser;
 
+  errorMessage;
+  credentials: PasswordCredentials = {
+    password: '',
+    confirmPassword: ''
+  };
+
   constructor(
     private router: Router,
     private authService: AuthService) { }
 
+  resetPassword() {
+
+    if (this.credentials.password === this.credentials.confirmPassword) {
+      this.authService.ChangePassword(this.credentials.password);
+    } else {
+      this.errorMessage = "Hasła nie są identyczne."
+    }
+  }
+
   ngOnInit() {
   }
 
+}
+
+interface PasswordCredentials {
+  password: string;
+  confirmPassword: string;
 }

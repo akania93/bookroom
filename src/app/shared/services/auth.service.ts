@@ -2,12 +2,12 @@ import { Injectable, NgZone } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreDocument, DocumentReference } from '@angular/fire/firestore';
 import { User } from 'firebase';
-import { Observable, throwError } from 'rxjs/index';
+import { Observable, throwError, from } from 'rxjs/index';
 import * as firebase from 'firebase/app';
 import { Router } from '@angular/router';
 import { AppUser } from "../interfaces/user";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, filter, first } from 'rxjs/operators';
 
 export interface Credentials {
   email: string;
@@ -19,6 +19,8 @@ export class AuthService {
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
   userData: any; // Save logged in user data
   userDoc: any; // Save logged in user data
+  serverUrl: string = "http://localhost:3000";
+
 
   constructor(
     private fireAuth: AngularFireAuth,
@@ -49,7 +51,7 @@ export class AuthService {
   get user(): User | null {
     return this.fireAuth.auth.currentUser;
   }
-  
+
   get localStorageUser(): AppUser | null {
     return JSON.parse(localStorage.getItem('user'));
   }
@@ -84,7 +86,7 @@ export class AuthService {
   }
 
   setUserDataToDB(fireUser) {
-    let server_url = 'http://localhost:3000/users/';
+    let server_url = `${this.serverUrl}/users/`;
 
     let userToadd: AppUser = {
       uid: fireUser.uid,
@@ -96,11 +98,6 @@ export class AuthService {
       phoneNumber: fireUser.phoneNumber
     };
 
-    // let result = this.http.get(server_url)
-    // .subscribe((data) => {
-    //   console.log("subs: ", (data));
-    // });
-
     return this.http.post<AppUser>(server_url, userToadd).subscribe();
   }
 
@@ -111,8 +108,9 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['/']);
           });
-          this.SetUserData(res.user);
-          //this.setUserDataToDB(res.user);
+          // this.SetUserData(res.user);
+          this.setUserDataToDB(res.user);
+
           resolve(res);
         }).catch((error) => {
           console.error("log: ", JSON.stringify(error));
@@ -128,7 +126,7 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['']);
           });
-          this.SetUserData(res.user);
+          //this.SetUserData(res.user);
           resolve(res);
         }).catch((error) => {
           console.error("error log: ", JSON.stringify(error));
@@ -146,7 +144,8 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['/']);
           });
-          this.SetUserData(res.user);
+          //this.SetUserData(res.user);
+          this.setUserDataToDB(res.user);
           resolve(res);
         }, err => {
           console.error("log: ", JSON.stringify(err));
@@ -166,7 +165,8 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['/']);
           });
-          this.SetUserData(res.user);
+          //this.SetUserData(res.user);
+          this.setUserDataToDB(res.user);
           resolve(res);
         }, err => {
           console.error("log: ", JSON.stringify(err));
@@ -192,11 +192,11 @@ export class AuthService {
   // }
 
 
-  logout() {
+  logout(routing = '/') {
     return this.fireAuth.auth.signOut()
       .then(() => {
         localStorage.removeItem('user');
-        this.router.navigate(['/']);
+        this.router.navigate([routing]);
       }).catch((error) => {
         console.error("log: ", JSON.stringify(error));
       });
@@ -213,7 +213,7 @@ export class AuthService {
   }
 
   // Reset Forggot password
-  ForgotPassword(passwordResetEmail) {
+  ForgotPassword_with_firebase_db(passwordResetEmail) {
     this.db.collection('users', ref => ref.where('email', '==', passwordResetEmail)).valueChanges()
       .subscribe((value) => {
 
@@ -236,7 +236,49 @@ export class AuthService {
           window.alert(`Ten email jest już używany dla metody logowania: ${providerId}. Nie możesz zresetować hasła.`);
         }
       });
+  }
+  // Reset Forggot password
+  ResetPassword(passwordResetEmail) {
+    return new Promise<any>((resolve, reject) => {
+      this.fireAuth.auth.sendPasswordResetEmail(passwordResetEmail)
+        .then(res => {
+          this.ngZone.run(() => {
+            this.router.navigate(['sign']);
+          });
+          window.alert('Wysłano maila do resetowania hasła. Sprawdź swoją pocztę.');
+          resolve(res);
+        }).catch((error) => {
+          console.error("log: ", JSON.stringify(error));
+          reject(error);
+        });
+    });
+  }
 
+  ChangePassword(newPassword) {
+    return new Promise<any>((resolve, reject) => {
+      this.fireAuth.auth.currentUser.updatePassword(newPassword)
+        .then(res => {
+          window.alert('Zmieniono hasło !');
+          this.logout('sign');
+          resolve(res);
+        }).catch((error) => {
+          console.error("log: ", JSON.stringify(error));
+          reject(error);
+        });
+    });
+  }
+
+  DeleteUser() {
+    let decision = window.confirm("Napewno?");
+
+    if (decision) {
+      return this.fireAuth.auth.currentUser.delete()
+        .then(() => {
+          this.logout();
+        }).catch((error) => {
+          console.error("DeleteUser log: ", JSON.stringify(error));
+        });
+    }
   }
 
 
