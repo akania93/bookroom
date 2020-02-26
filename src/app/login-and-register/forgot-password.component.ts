@@ -24,9 +24,9 @@ export class ForgotPasswordComponent implements OnInit {
 
   forgotPassword(passwordResetEmail) {
     // Trzeba pobrac providerId z api. Teraz muszę przeszukać całą listę.
-    // TODO: Ale w api będzie już metoda na to prostrza. 
-    const result0: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.authService.serverUrl}/users/`);
-    result0.subscribe(
+    // TODO: Ale w api będzie już metoda na to prostsza. 
+    const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.authService.serverUrl}/users/`);
+    result$.subscribe(
       value => {
         const appUser = value.filter(item => item.email === passwordResetEmail)[0];
         if (appUser !== undefined) {

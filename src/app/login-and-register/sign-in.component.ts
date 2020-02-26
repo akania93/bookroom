@@ -25,11 +25,26 @@ export class SignInComponent implements OnInit {
       this.authService.login(this.credentials)
         // .then(() => (console.log("then 2")))
         .catch((err) => {
-          if (err.code === "auth/user-not-found") {
-            this.errorMessage = "Nie znaleziono użytkownika. Konto mogło zostać usunięte.";
-          } else {
-            this.errorMessage = err.message;
+
+          switch (err.code) {
+            case "auth/user-not-found": {
+              this.errorMessage = "Nie znaleziono użytkownika. Konto mogło zostać usunięte";
+              break;
+            }
+            case "auth/wrong-password": {
+              this.errorMessage = "Niepoprawne hasło lub login";
+              break;
+            }
+            case "auth/too-many-requests": {
+              this.errorMessage = "Zbyt wiele błędnych logowań. Spróbuj ponownie później";
+              break;
+            }
+            default: {
+              this.errorMessage = err.message;
+              break;
+            }
           }
+
         });
 
 

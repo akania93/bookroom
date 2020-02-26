@@ -25,27 +25,21 @@
             <div class="card-body">
                 <p>Follow the instructions below</p>
 
-
-                <!-- ------------------------------------------------------------ -->
-
                 <form name="form">
-
                     <div class="input-group mb-3 pt-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-lock"></i></span>
                         </div>
-                        <input [(ngModel)]="credentials.password" type="password" name="Password"
+                        <input [(ngModel)]="password_credentials.password" type="password" name="Password"
                             class="form-control sty1" placeholder="Password" required>
                     </div>
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-lock"></i></span>
                         </div>
-                        <input [(ngModel)]="credentials.confirmPassword" type="password" name="ConfirmPassword"
+                        <input [(ngModel)]="password_credentials.confirmPassword" type="password" name="ConfirmPassword"
                             class="form-control" placeholder="Confirm password">
                     </div>
-
-                    {{credentials | json}}
                     <div>
                         <p style="color:#E92626;font-size:20px;font-weight:normal" Class="success" align="left">
                             {{errorMessage}}
@@ -53,16 +47,24 @@
                     </div>
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button type="submit" (click)="resetPassword()" class="btn-rounded btn-pink btn d-block float-right"
-                                color="pink">Update profile</button>
+                            <button type="submit" (click)="resetPassword()"
+                                class="btn-rounded btn-pink btn d-block float-right" color="pink" data-toggle="tooltip"
+                                data-placement="top" title="Tooltip on top">Update profile</button>
+
+                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
+                                title="Tooltip on top">
+                                Tooltip on top
+                            </button>
+
+                            <button type="button" class="btn btn-lg btn-primary" data-toggle="popover"
+                                title="Popover title"
+                                data-content="And here's some amazing content. It's very engaging. Right?">Click
+                                to toggle popover</button>
+
                         </div>
                     </div>
                 </form>
-
-                <!-- ------------------------------------------------------------ -->
-
-
-                <!-- <button type="submit" class="btn-rounded btn-pink btn d-block float-right" color="pink">Update profile</button> -->
+                
             </div>
         </div>
 

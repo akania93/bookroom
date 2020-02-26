@@ -51,7 +51,6 @@ export class AuthService {
   get user(): User | null {
     return this.fireAuth.auth.currentUser;
   }
-
   get localStorageUser(): AppUser | null {
     return JSON.parse(localStorage.getItem('user'));
   }
@@ -86,19 +85,29 @@ export class AuthService {
   }
 
   setUserDataToDB(fireUser) {
-    let server_url = `${this.serverUrl}/users/`;
+    // sprawdzanie czy już jest taki użytkownik:
+    const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.serverUrl}/users/`);
+    result$.subscribe(
+      value => {
+        const appUser = value.filter(item => item.email === fireUser["email"])[0];
+        if (appUser !== undefined) {
+          // konto istnieje
+        } else {
 
-    let userToadd: AppUser = {
-      uid: fireUser.uid,
-      providerId: fireUser.providerData[0].providerId,
-      displayName: fireUser.displayName,
-      image: fireUser.photoURL,
-      email: fireUser.email,
-      emailVerified: fireUser.emailVerified,
-      phoneNumber: fireUser.phoneNumber
-    };
+          let userToadd: AppUser = {
+            uid: fireUser.uid,
+            providerId: fireUser.providerData[0].providerId,
+            displayName: fireUser.displayName,
+            image: fireUser.photoURL,
+            email: fireUser.email,
+            emailVerified: fireUser.emailVerified,
+            phoneNumber: fireUser.phoneNumber
+          };
+          return this.http.post<AppUser>(`${this.serverUrl}/users/`, userToadd).subscribe();
 
-    return this.http.post<AppUser>(server_url, userToadd).subscribe();
+        }
+      },
+      error => { });
   }
 
   register({ email, password }: Credentials) {
@@ -270,18 +279,36 @@ export class AuthService {
 
   DeleteUser() {
     let decision = window.confirm("Napewno?");
+    const localStorageUserEmail = this.localStorageUser.email;
 
     if (decision) {
       return this.fireAuth.auth.currentUser.delete()
         .then(() => {
+          this.deleteUserFromDB(localStorageUserEmail);
           this.logout();
         }).catch((error) => {
+          if (error.code === "auth/requires-recent-login") {
+            window.alert("Ta akcja wymaga ponownego zalogowania.");
+            this.logout("/sign");
+          }
           console.error("DeleteUser log: ", JSON.stringify(error));
         });
     }
   }
-
-
+  private deleteUserFromDB(localStorageUserEmail) {
+    // GET: po email lub uuid
+    const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.serverUrl}/users/`);
+    result$.subscribe(
+      value => {
+        const appUser = value.filter(item => item.email === localStorageUserEmail)[0];
+        if (appUser !== undefined) {
+          return this.http.delete(`${this.serverUrl}/users/${appUser.id}`).subscribe();
+        } else {
+          console.warn(`log DeleteUser(): w DB nie znaleziono uzytkownika z emailem ${localStorageUserEmail}. Nic nie usunięto.`);
+        }
+      },
+      error => console.error("log DeleteUser(): ", error));
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
