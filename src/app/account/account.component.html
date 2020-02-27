@@ -1,48 +1,53 @@
-<div class="row full-height">
-  <div id="AccountComponentContainer" class="col-2">
-    <div class="position-sticky make-mt">
-      <img [src]="emptyPhotoURL" width="100" height="100" class="img-fluid rounded-circle mx-auto d-block z-depth-0 mt-3">
-      
-      <div class="fs-12 text-center">
+<div id="AccountComponentContainer" class="full-height">
+
+  <aside class="account-left-column">
+    <div class="position-sticky" style="top: 20px;">
+
+      <!-- #region image -->
+      <img *ngIf="!isImageLoading && imageToShow; else noImageFound" [src]="imageToShow"
+        class="img-fluid rounded-circle mx-auto d-block z-depth-0" width="80" height="80" alt="">
+      <ng-template #noImageFound>
+        <img [src]="emptyPhotoURL" width="80" height="80" alt="" class="img-fluid rounded-circle mx-auto d-block z-depth-0">
+      </ng-template>
+      <!-- #endregion image -->
+
+
+      <div class="fs-12 text-center mt-3">
         <p class="my-0">Welcome</p>
-        <p class="my-0">{{localStorageUser.displayName !== null ? localStorageUser.displayName : localStorageUser.email}}</p>
-        <p class="my-0">created at: {{localStorageUser.createdAt | date: 'dd.MM.yyyy H:mm' }}</p>
-        <p class="my-0">last login: {{localStorageUser.lastLoginAt | date: 'dd.MM.yyyy H:mm' }}</p>
+        <p class="my-0">
+          {{localStorageUser.displayName !== null ? localStorageUser.displayName : localStorageUser.email}}</p>
       </div>
-      
-  
-      <ul class="nav flex-column py-4">
+
+      <ul class="nav flex-column py-4 pl-1">
         <li class="nav-item">
           <a class="nav-link active" routerLink="/account" routerLinkActive="active">
-            <i class="far fa-user pr-3"></i> My profile
+            <i class="far fa-user pr-3"></i> <span>My profile</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/account/adv" routerLinkActive="active">
-            <i class="fas fa-home pr-3"></i> Advertisements
+            <i class="fas fa-home pr-3"></i> <span>Advertisements</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" (click)="logout()" routerLinkActive="active">
-            <i class="fas fa-sign-out-alt pr-3"></i> Logout
+            <i class="fas fa-sign-out-alt pr-3"></i> <span>Logout</span>
           </a>
         </li>
       </ul>
+
+      <div class="fs-11 mt-3 pl-3">
+        <p class="my-0">created at: {{localStorageUser.createdAt | date: 'dd.MM.yyyy H:mm' }}</p>
+        <p class="my-0">last login: {{localStorageUser.lastLoginAt | date: 'dd.MM.yyyy H:mm' }}</p>
+      </div>
+
     </div>
-    
-    
-  </div>
+
+  </aside>
 
   <!-- routing-->
-  <div class="col-10 p-4">
-    <router-outlet></router-outlet> 
+  <div class="account-right-column">
+    <router-outlet></router-outlet>
   </div>
 
 </div>
-
-
-
-    
-
-    
- 

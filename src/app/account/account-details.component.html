@@ -1,24 +1,64 @@
 <h1>My profile</h1>
 <h6>Complete your profile & apply with just one click!</h6>
 
-<div class="row">
-    <div class="col-6">
-        <div class="card">
+<div class="row mt-4">
+    <div class="col-12 col-lg-6">
+        <div class="card mb-4">
             <div class="card-header">
                 User details
             </div>
             <div class="card-body">
+
+                <form name="form">
+                    <div class="input-group mb-3 pt-4">
+                        <input [(ngModel)]="profileCredentials.name" type="text" name="Name"
+                            class="form-control sty1" placeholder="Name" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input [(ngModel)]="profileCredentials.surname" type="text" name="Surname"
+                            class="form-control sty1" placeholder="Surname" required>
+                    </div>
+                    <div class="input-group mb-4">
+                        <input [(ngModel)]="profileCredentials.email" type="text" name="Email"
+                            class="form-control" placeholder="Email">
+                    </div>
+                    <div class="input-group mb-4">
+                        <input [(ngModel)]="profileCredentials.phoneNumber" type="text" name="PhoneNumber"
+                            class="form-control" placeholder="Phone Number">
+                    </div>
+                    <div class="input-group mb-4">
+                        <input [(ngModel)]="profileCredentials.city" type="text" name="City"
+                            class="form-control" placeholder="City">
+                    </div>
+                    <div>
+                        <p style="color:#E92626;font-size:20px;font-weight:normal" Class="success" align="left">
+                            {{errorMessage}}
+                        </p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button type="submit" (click)="updateProfile()"
+                                class="btn-rounded btn-pink btn d-block float-right" color="pink">Update profile</button>
+                        </div>
+                    </div>
+                </form>
+
                 <div class="fs-12">
+                    <p>profileCredentials:</p>
+                    <pre>{{ profileCredentials | json }}</pre>
+                </div>
+
+                <div class="fs-12">
+                    <p>localStorageUser:</p>
                     <pre>{{ localStorageUser | json }}</pre>
                 </div>
 
-                <button class="btn-rounded btn-pink btn d-block float-right" color="pink">Update profile</button>
             </div>
         </div>
     </div>
 
-    <div class="col-6">
-        <div class="card">
+    <div class="col-12 col-lg-6">
+        <div  class="card mb-4">
             <div class="card-header">
                 Set up new password
             </div>
@@ -47,28 +87,17 @@
                     </div>
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button type="submit" (click)="resetPassword()"
-                                class="btn-rounded btn-pink btn d-block float-right" color="pink" data-toggle="tooltip"
-                                data-placement="top" title="Tooltip on top">Update profile</button>
-
-                            <button type="button" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
-                                title="Tooltip on top">
-                                Tooltip on top
-                            </button>
-
-                            <button type="button" class="btn btn-lg btn-primary" data-toggle="popover"
-                                title="Popover title"
-                                data-content="And here's some amazing content. It's very engaging. Right?">Click
-                                to toggle popover</button>
-
+                            <button type="submit" (click)="updatePassword()"
+                                class="btn-rounded btn-pink btn d-block float-right" color="pink" 
+                                [disabled]="passwordChangeDisabled">Update password</button>
                         </div>
                     </div>
                 </form>
-                
+
             </div>
         </div>
 
-        <div class="card mt-4">
+        <div class="card">
             <div class="card-header">
                 Delete Account
             </div>

@@ -1,15 +1,17 @@
 {
   "users": [
     {
-      "id": 1,
-      "name": "test1"
+      "uid": "1KKoXFKyU4Sx0KQe5PD3uWlHRtv2",
+      "providerId": "google.com",
+      "displayName": "Artur Kania",
+      "image": "https://lh5.googleusercontent.com/-oHb5xIQm7Do/AAAAAAAAAAI/AAAAAAAAAAA/ACHi3rc8fuAs0E8t_QUd694mj2Tnwm7I3g/photo.jpg",
+      "email": "kaniaartur93@gmail.com",
+      "emailVerified": true,
+      "phoneNumber": null,
+      "id": 2
     },
     {
-      "id": 2,
-      "name": "test2"
-    },
-    {
-      "uid": "0McgeyJG1jUwtV8asplMmtWMc1P2",
+      "uid": "6UdGmuJZraVI8G1YdgENuqC4SqM2",
       "providerId": "facebook.com",
       "displayName": "Artur Kania",
       "image": "https://graph.facebook.com/2676667775742847/picture",

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { AppUser } from "../interfaces/user";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError, filter, first } from 'rxjs/operators';
+import { ImageService } from './image.service';
 
 export interface Credentials {
   email: string;
@@ -17,8 +18,9 @@ export interface Credentials {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
+  fuserData: any; // Save logged in user data
   userData: any; // Save logged in user data
-  userDoc: any; // Save logged in user data
+  fuserDoc: any; // Save logged in user data
   serverUrl: string = "http://localhost:3000";
 
 
@@ -31,17 +33,22 @@ export class AuthService {
   ) {
     /* Saving user data in localstorage when 
         logged in and setting up null when logged out */
-    this.fireAuth.authState.subscribe(user => {
-      if (user) {
-        this.userData = user;
+    this.fireAuth.authState.subscribe(authUser => {
+      if (authUser) {
+        var authUserstringify = JSON.stringify(authUser);
+        
+        this.fuserData = authUserstringify;
+        localStorage.setItem('f_user', authUserstringify);
+        this.userData = this.mapFirebaseAuthUserToAppUser(authUser);
         localStorage.setItem('user', JSON.stringify(this.userData));
 
-        this.db.collection('users').doc(user.uid).valueChanges()
+        this.db.collection('users').doc(authUser.uid).valueChanges()
           .subscribe(value => {
-            this.userDoc = value;
-            // localStorage.setItem('userDoc', JSON.stringify(value));
+            this.fuserDoc = value;
+            // localStorage.setItem('fuserDoc', JSON.stringify(value));
           });
       } else {
+        localStorage.setItem('f_user', null);
         localStorage.setItem('user', null);
         // localStorage.setItem('userDoc', null);
       }
@@ -54,11 +61,43 @@ export class AuthService {
   get localStorageUser(): AppUser | null {
     return JSON.parse(localStorage.getItem('user'));
   }
+  get providerId() {
+    var appUser: AppUser = JSON.parse(localStorage.getItem('user'));
+    return appUser.providerId;
+  }
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user'));
-    return user !== null;
-    // return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null && user.email !== null) ? true : false;
+  }
+
+  mapFirebaseUserToAppUser(fuser) {
+    const userData: AppUser = {
+      uid: fuser.uid,
+      providerId: fuser.providerData[0].providerId,
+      displayName: fuser.displayName,
+      image: fuser.photoURL,
+      email: fuser.email,
+      emailVerified: fuser.emailVerified,
+      phoneNumber: fuser.phoneNumber,
+      lastLoginAt: fuser.lastLoginAt,
+      createdAt: fuser.createdAt
+    };
+    return userData;
+  }
+  mapFirebaseAuthUserToAppUser(fuser: User) {
+    const userData: AppUser = {
+      uid: fuser.uid,
+      providerId: fuser.providerData[0].providerId,
+      displayName: fuser.displayName,
+      image: fuser.photoURL,
+      email: fuser.email,
+      emailVerified: fuser.emailVerified,
+      phoneNumber: fuser.phoneNumber,
+      lastLoginAt: fuser.metadata["b"],
+      createdAt: fuser.metadata["a"]
+    };
+    return userData;
   }
 
 
@@ -68,7 +107,6 @@ export class AuthService {
   SetUserData(user) {
     // const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
     const userRef: AngularFirestoreDocument<any> = this.db.collection('users').doc(user.uid);
-
     const userData: AppUser = {
       uid: user.uid,
       providerId: user.providerData[0].providerId,
@@ -76,7 +114,9 @@ export class AuthService {
       image: user.photoURL,
       email: user.email,
       emailVerified: user.emailVerified,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      lastLoginAt: user.lastLoginAt,
+      createdAt: user.createdAt
     };
 
     return userRef.set(userData, {
@@ -94,17 +134,8 @@ export class AuthService {
           // konto istnieje
         } else {
 
-          let userToadd: AppUser = {
-            uid: fireUser.uid,
-            providerId: fireUser.providerData[0].providerId,
-            displayName: fireUser.displayName,
-            image: fireUser.photoURL,
-            email: fireUser.email,
-            emailVerified: fireUser.emailVerified,
-            phoneNumber: fireUser.phoneNumber
-          };
+          let userToadd: AppUser = this.mapFirebaseUserToAppUser(fireUser);
           return this.http.post<AppUser>(`${this.serverUrl}/users/`, userToadd).subscribe();
-
         }
       },
       error => { });
@@ -309,28 +340,4 @@ export class AuthService {
       },
       error => console.error("log DeleteUser(): ", error));
   }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        `body was: ${error.error}`);
-    }
-    // return an observable with a user-facing error message
-    return throwError(
-      'Something bad happened; please try again later.');
-  }
-
-
-
-
-
 }
-
-
-

@@ -36,13 +36,13 @@ import { AccountAdvertisementsComponent } from './account/account-advertisements
 
   ],
   imports: [
+    MDBBootstrapModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebaseConfig),
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     AngularFireAuthModule,
     AngularFirestoreModule,
-    MDBBootstrapModule.forRoot(),
     HttpClientModule
   ],
   providers: [

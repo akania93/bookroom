@@ -7,6 +7,6 @@ export interface AppUser {
     email: string;
     emailVerified?: boolean;
     phoneNumber: string;
-    // lastLoginAt: string;
-    // createdAt: string;
+    lastLoginAt: string;
+    createdAt: string;
 }

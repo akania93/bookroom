@@ -49,10 +49,13 @@ html > body {
 }
 
 .full-height {
-    height: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     // min-height: 100vh;
     min-height: calc(100vh - 80px);
 
+    // TODO arka: wywal to potem
     > [class*="col-"] {
         border: 1px solid #ddd;
       }
@@ -79,14 +82,13 @@ hr.style1{
     min-height: 100vh;
 }
 
-#MainContent {
-    padding-bottom: 4.5rem;
-}
 
 /* NavBar */
 #MainNavbar  {
     .navbar {
         background-color: #fff;
+        box-shadow: none;
+        border-bottom: 1px solid rgb(228, 232, 240);
 
         @media (min-width: 768px) { 
             height: 80px;
@@ -137,10 +139,22 @@ footer#MainFooter .footer-icons a:last-of-type {
     margin-right: 30px;
 }
 
-
+//-------------- Account -----------
 #AccountComponentContainer {
-    background: #fff;
-    .make-mt {
-        top: 20px;
+    
+    .account-left-column {
+        flex-shrink: 0;
+        width: 225px;
+        border-right: 1px solid rgb(228, 232, 240);
+        background: #fff;
+        padding: 20px 0px;
+    }
+
+    .account-right-column {
+        -webkit-box-flex: 1;
+        flex-grow: 1;
+        position: relative;
+        max-width: calc(100% - 225px);
+        padding: 20px;
     }
 }

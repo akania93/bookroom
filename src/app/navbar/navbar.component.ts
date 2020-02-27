@@ -15,9 +15,8 @@ export class NavbarComponent implements OnInit {
   @Input() brandName: string;
 
   currentUser: User;
-  // localStorageUser: AppUser;
   emptyPhotoURL = "assets/image/facebook-profile-photo.jpg";
-  photoUrl;
+  photoUrl = null;
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -29,15 +28,12 @@ export class NavbarComponent implements OnInit {
 
     this.authService.authState$.subscribe(
       (value) => {
-
         this.currentUser = value;
-        // this.localStorageUser = this.authService.localStorageUser;
         this.photoUrl = (this.currentUser !== null && this.currentUser.photoURL !== null)
           ? this.currentUser.photoURL : this.emptyPhotoURL;
-
       },
       (error) => {
-        console.error("navbar authState ERROR: ", JSON.stringify(error));
+        console.error("navbar ngOnInit ERROR: ", JSON.stringify(error));
       });
   }
 }
