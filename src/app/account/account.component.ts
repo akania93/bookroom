@@ -9,12 +9,10 @@ import { ImageService } from '../shared/services/image.service';
 
 @Component({
   selector: 'bookr-account',
-  templateUrl: './account.component.html',
-  styles: []
+  templateUrl: './account.component.html'
 })
 export class AccountComponent implements OnInit {
 
-  currentUser: User;
   localStorageAppUser = this.authService.getLocalStorageAppUser;
 
   emptyPhotoURL = "assets/image/facebook-profile-photo.jpg";
@@ -28,8 +26,7 @@ export class AccountComponent implements OnInit {
     private imageService: ImageService) { }
 
   logout() {
-    this.authService.logout()
-      .then(() => this.router.navigate(['/']));
+    this.authService.logout();
   }
 
 // #region image
@@ -40,7 +37,8 @@ export class AccountComponent implements OnInit {
       this.isImageLoading = false;
     }, error => {
       this.isImageLoading = false;
-      console.error("[account.component.ts] getImageFromService(): ", error);
+      console.warn("[account.component.ts] getImageFromService(): ", "Nie udało się odczytać obrazka");
+      console.error(JSON.stringify(error));
     });
   }
   getImage(imageUrl: string): Observable<Blob> {
@@ -61,8 +59,9 @@ export class AccountComponent implements OnInit {
   ngOnInit() {
     this.authService.authState$.subscribe(
       (value) => {
-        this.currentUser = value;
-        this.getImageFromService(this.currentUser.photoURL);
+        if (this.authService.isLoggedIn) {
+          this.getImageFromService(this.localStorageAppUser.image);
+        }
       },
       (error) => {
         console.error("account ngOnInit ERROR: ", JSON.stringify(error));

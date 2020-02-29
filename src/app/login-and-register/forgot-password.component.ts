@@ -22,6 +22,8 @@ export class ForgotPasswordComponent implements OnInit {
   ngOnInit() {
   }
 
+  // Użycie dla użytkownika w Api DB
+  // TODO: jak zdecyduję się na firestore to usunąć to
   forgotPassword(passwordResetEmail) {
     // Trzeba pobrac providerId z api. Teraz muszę przeszukać całą listę.
     // TODO: Ale w api będzie już metoda na to prostsza. 

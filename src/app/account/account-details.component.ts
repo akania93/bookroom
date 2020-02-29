@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../shared/services/auth.service';
+import { AuthService, ProfileCredentials } from '../shared/services/auth.service';
 import { AppUser } from '../shared/interfaces/user';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -16,9 +16,9 @@ export class AccountDetailsComponent implements OnInit {
   city; // TODO: trzeba obsłużyć
 
   errorMessage;
-  passwordChangeDisabled = false;
+  passwordChangeEnabled = false;
   profileCredentials: ProfileCredentials;
-  password_credentials: PasswordCredentials = {
+  passwordCredentials = {
     password: '',
     confirmPassword: ''
   };
@@ -28,59 +28,38 @@ export class AccountDetailsComponent implements OnInit {
     private authService: AuthService,
     private http: HttpClient) { }
 
-  updateProfile() {
-
-  }
-
   updatePassword() {
-    let prvoviderId = this.authService.getProviderId;
-    if (prvoviderId === "password") {
-      if (this.password_credentials.password === this.password_credentials.confirmPassword) {
-        this.authService.ChangePassword(this.password_credentials.password);
-      } else {
-        this.errorMessage = "Hasła nie są identyczne."
-      }
+    if (this.passwordCredentials.password === this.passwordCredentials.confirmPassword) {
+      this.authService.ChangePassword(this.passwordCredentials.password);
     } else {
-      this.errorMessage = `Ten email jest już używany dla metody logowania: ${prvoviderId}. Nie możesz zresetować hasła.`;
+      this.errorMessage = "Hasła nie są identyczne."
     }
-
-    // var localUserEmail = this.authService.getLocalStorageAppUser.email;
-    // const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.authService.serverUrl}/users/`);
-    // result$.subscribe(
-    //   value => {
-    //     const appUser = value.filter(item => item.email === localUserEmail)[0];
-    //     if (appUser !== undefined) {
-
-    //     }
-    //   },
-    //   error => this.errorMessage = error);
   }
 
   ngOnInit() {
-    if (this.authService.getProviderId !== "password") {
-      this.passwordChangeDisabled = true;
+    if (this.authService.getProviderId === "password") {
+      this.passwordChangeEnabled = true;
+    }
+
+    let displayNameArray = null;
+    let surnameBuilder = null;
+    if (this.localStorageAppUser.displayName !== null) {
+      displayNameArray = this.localStorageAppUser.displayName.split(' ');
+      displayNameArray.slice(1).forEach(function (el) {
+        surnameBuilder = ' ' + el;
+      });
+      if (surnameBuilder !== null) {
+        surnameBuilder = surnameBuilder.substring(1);
+      }
     }
 
     this.profileCredentials = {
-      name: this.localStorageAppUser.displayName.split(' ')[0],
-      surname: this.localStorageAppUser.displayName.split(' ')[1],
+      name: displayNameArray !== null ? displayNameArray[0] : null,
+      surname: surnameBuilder,
       email: this.localStorageAppUser.email,
       phoneNumber: this.localStorageAppUser.phoneNumber,
-      city: null
+      city: this.localStorageAppUser.city
     };
   }
 
 }
-
-interface PasswordCredentials {
-  password: string;
-  confirmPassword: string;
-}
-interface ProfileCredentials {
-  name: string;
-  surname: string;
-  email: string;
-  phoneNumber: string;
-  city: string;
-}
-

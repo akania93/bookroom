@@ -16,11 +16,11 @@
                     </div>
                     <div class="input-group mb-3">
                         <input [(ngModel)]="profileCredentials.surname" type="text" name="Surname"
-                            class="form-control sty1" placeholder="Surname" required>
+                            class="form-control sty1" placeholder="Surname">
                     </div>
                     <div class="input-group mb-4">
                         <input [(ngModel)]="profileCredentials.email" type="text" name="Email"
-                            class="form-control" placeholder="Email">
+                            class="form-control" placeholder="Email" disabled>
                     </div>
                     <div class="input-group mb-4">
                         <input [(ngModel)]="profileCredentials.phoneNumber" type="text" name="PhoneNumber"
@@ -31,13 +31,13 @@
                             class="form-control" placeholder="City">
                     </div>
                     <div>
-                        <p style="color:#E92626;font-size:20px;font-weight:normal" Class="success" align="left">
+                        <p class="default-form-error-message-text">
                             {{errorMessage}}
                         </p>
                     </div>
                     <div class="row">
                         <div class="col-12 text-center">
-                            <button type="submit" (click)="updateProfile()"
+                            <button type="submit" (click)="authService.UpdateProfile(profileCredentials)"
                                 class="btn-rounded btn-pink btn d-block float-right" color="pink">Update profile</button>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
 
                 <div class="fs-12">
                     <p>localStorageUser:</p>
-                    <pre>{{ localStorageUser | json }}</pre>
+                    <pre>{{ localStorageAppUser | json }}</pre>
                 </div>
 
             </div>
@@ -58,7 +58,8 @@
     </div>
 
     <div class="col-12 col-lg-6">
-        <div  class="card mb-4">
+        
+        <div *ngIf="passwordChangeEnabled" class="card mb-4">
             <div class="card-header">
                 Set up new password
             </div>
@@ -70,26 +71,25 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-lock"></i></span>
                         </div>
-                        <input [(ngModel)]="password_credentials.password" type="password" name="Password"
+                        <input [(ngModel)]="passwordCredentials.password" type="password" name="Password"
                             class="form-control sty1" placeholder="Password" required>
                     </div>
                     <div class="input-group mb-4">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-lock"></i></span>
                         </div>
-                        <input [(ngModel)]="password_credentials.confirmPassword" type="password" name="ConfirmPassword"
+                        <input [(ngModel)]="passwordCredentials.confirmPassword" type="password" name="ConfirmPassword"
                             class="form-control" placeholder="Confirm password">
                     </div>
                     <div>
-                        <p style="color:#E92626;font-size:20px;font-weight:normal" Class="success" align="left">
+                        <p class="default-form-error-message-text">
                             {{errorMessage}}
                         </p>
                     </div>
                     <div class="row">
                         <div class="col-12 text-center">
                             <button type="submit" (click)="updatePassword()"
-                                class="btn-rounded btn-pink btn d-block float-right" color="pink" 
-                                [disabled]="passwordChangeDisabled">Update password</button>
+                                class="btn-rounded btn-pink btn d-block float-right" color="pink">Update password</button>
                         </div>
                     </div>
                 </form>

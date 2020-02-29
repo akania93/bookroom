@@ -22,11 +22,13 @@ export class SignUpComponent implements OnInit {
 
   signUp() {
 
-      this.authService.register(this.credentials)
-        // .then(() => (console.log("then 2")))
-        .catch((err) => {
-          this.errorMessage = err.message;
-        });
+    this.authService.register(this.credentials)
+      .then(() => {
+
+      })
+      .catch((err) => {
+        this.errorMessage = err.message;
+      });
   }
 
   ngOnInit() { }

@@ -14,13 +14,20 @@ export interface Credentials {
   email: string;
   password: string;
 }
+export interface ProfileCredentials {
+  name: string;
+  surname: string;
+  email: string;
+  phoneNumber: string;
+  city: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
   fuser: any; // Save logged in user data
-  fuserDbData: any;
-  appUser: any;
+  docUser: AppUser;
+  // appUser: any;
   serverUrl: string = "http://localhost:3000";
 
 
@@ -38,18 +45,18 @@ export class AuthService {
         const authUserstringify = JSON.stringify(authUser);
         this.fuser = authUserstringify;
         localStorage.setItem('f_user', authUserstringify);
-        this.appUser = this.mapFirebaseAuthUserToAppUser(authUser);
-        localStorage.setItem('app_user', JSON.stringify(this.appUser));
+        // this.appUser = this.mapFirebaseAuthUserToAppUser(authUser);
+        // localStorage.setItem('app_user', JSON.stringify(this.appUser));
 
         this.db.collection('users').doc(authUser.uid).valueChanges()
           .subscribe(value => {
-            this.fuserDbData = value;
-            localStorage.setItem('fuserDbData', JSON.stringify(value));
+            this.docUser = value as AppUser;
+            localStorage.setItem('doc_user', JSON.stringify(this.docUser));
           });
       } else {
         localStorage.setItem('f_user', null);
-        localStorage.setItem('app_user', null);
-        localStorage.setItem('fuserDbData', null);
+        // localStorage.setItem('app_user', null);
+        localStorage.setItem('doc_user', null);
       }
     });
   }
@@ -58,15 +65,14 @@ export class AuthService {
     return this.fireAuth.auth.currentUser;
   }
   get getLocalStorageAppUser(): AppUser | null {
-    return JSON.parse(localStorage.getItem('app_user'));
+    return JSON.parse(localStorage.getItem('doc_user'));
   }
   get getProviderId() {
-    var appUser: AppUser = JSON.parse(localStorage.getItem('app_user'));
+    var appUser: AppUser = JSON.parse(localStorage.getItem('doc_user'));
     return appUser.providerId;
   }
-  // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
-    const user = JSON.parse(localStorage.getItem('app_user'));
+    const user = JSON.parse(localStorage.getItem('doc_user'));
     return (user !== null && user.email !== null) ? true : false;
   }
 
@@ -93,6 +99,7 @@ export class AuthService {
       email: fuser.email,
       emailVerified: fuser.emailVerified,
       phoneNumber: fuser.phoneNumber,
+      city: null,
       lastLoginAt: fuser.metadata["b"],
       createdAt: fuser.metadata["a"]
     };
@@ -105,24 +112,19 @@ export class AuthService {
   provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
   SetUserData(user) {
     // const userRef: AngularFirestoreDocument<any> = this.db.doc(`users/${user.uid}`);
-    const userRef: AngularFirestoreDocument<any> = this.db.collection('users').doc(user.uid);
-    const userData: AppUser = {
-      uid: user.uid,
-      providerId: user.providerData[0].providerId,
-      displayName: user.displayName,
-      image: user.photoURL,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      phoneNumber: user.phoneNumber,
-      lastLoginAt: user.lastLoginAt,
-      createdAt: user.createdAt
-    };
+    const userRef: AngularFirestoreDocument<AppUser> = this.db.collection('users').doc(user.uid);
+    const userData: AppUser = this.mapFirebaseAuthUserToAppUser(user);
 
     return userRef.set(userData, {
       merge: true
-    });
+    }).then(
+      () => {
+        localStorage.setItem('doc_user', JSON.stringify(userData));
+      }
+    );
   }
 
+  // TODO: po decyzji zostania na firebase do usunięcia !
   setUserDataToDB(fireUser) {
     // sprawdzanie czy już jest taki użytkownik:
     const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.serverUrl}/users/`);
@@ -144,15 +146,19 @@ export class AuthService {
     return new Promise<any>((resolve, reject) => {
       this.fireAuth.auth.createUserWithEmailAndPassword(email, password)
         .then(res => {
-          this.ngZone.run(() => {
-            this.router.navigate(['/']);
-          });
-          // this.SetUserData(res.user);
-          this.setUserDataToDB(res.user);
-
-          resolve(res);
+          this.SetUserData(res.user).then(
+            () => {
+              this.ngZone.run(() => {
+                this.router.navigate(['/account']);
+              });
+              resolve(res);
+            }
+          );
+          //this.setUserDataToDB(res.user);
+          //resolve(res);
         }).catch((error) => {
           console.error("log: ", JSON.stringify(error));
+          console.error("log: ", JSON.stringify(error.message));
           reject(error);
         });
     });
@@ -174,6 +180,8 @@ export class AuthService {
     });
   }
 
+  // #region social Login
+
   doFacebookLogin() {
     return new Promise<any>((resolve, reject) => {
       let provider = new firebase.auth.FacebookAuthProvider();
@@ -183,8 +191,8 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['/']);
           });
-          //this.SetUserData(res.user);
-          this.setUserDataToDB(res.user);
+          this.SetUserData(res.user);
+          //this.setUserDataToDB(res.user);
           resolve(res);
         }, err => {
           console.error("log: ", JSON.stringify(err));
@@ -192,7 +200,6 @@ export class AuthService {
         });
     });
   }
-
   doGoogleLogin() {
     return new Promise<any>((resolve, reject) => {
       let provider = new firebase.auth.GoogleAuthProvider();
@@ -204,8 +211,8 @@ export class AuthService {
           this.ngZone.run(() => {
             this.router.navigate(['/']);
           });
-          //this.SetUserData(res.user);
-          this.setUserDataToDB(res.user);
+          this.SetUserData(res.user);
+          //this.setUserDataToDB(res.user);
           resolve(res);
         }, err => {
           console.error("log: ", JSON.stringify(err));
@@ -230,6 +237,7 @@ export class AuthService {
   //   return this.AuthLogin(new firebase.auth.FacebookAuthProvider());
   // }
 
+  // #endregion social Login
 
   logout(routing = '/') {
     return this.fireAuth.auth.signOut()
@@ -241,6 +249,7 @@ export class AuthService {
   }
 
   // Send email verfificaiton when new user sign up
+  // Na razie nie potrzebuję tego używać !
   SendVerificationMail() {
     return this.fireAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
@@ -250,8 +259,8 @@ export class AuthService {
       });
   }
 
-  // Reset Forggot password
-  ForgotPassword_with_firebase_db(passwordResetEmail) {
+  // Forggot password na stronie logowania
+  ForgotPassword(passwordResetEmail) {
     this.db.collection('users', ref => ref.where('email', '==', passwordResetEmail)).valueChanges()
       .subscribe((value) => {
 
@@ -275,7 +284,8 @@ export class AuthService {
         }
       });
   }
-  // Reset Forggot password
+  // Forggot password na stronie logowania używając usera w DB API
+  // TODO: jak zdecyduję się na firestore to usunąć to
   ResetPassword(passwordResetEmail) {
     return new Promise<any>((resolve, reject) => {
       this.fireAuth.auth.sendPasswordResetEmail(passwordResetEmail)
@@ -308,13 +318,18 @@ export class AuthService {
 
   DeleteUser() {
     let decision = window.confirm("Napewno?");
-    const localStorageUserEmail = this.getLocalStorageAppUser.email;
+    const uid = this.getLocalStorageAppUser.uid;
+
+    const userRef: AngularFirestoreDocument<AppUser> = this.db.collection('users').doc(uid);
 
     if (decision) {
       return this.fireAuth.auth.currentUser.delete()
         .then(() => {
-          this.deleteUserFromDB(localStorageUserEmail);
-          this.logout();
+          //this.deleteUserFromDB(email);
+
+          userRef.delete()
+          .then(() => this.logout());
+
         }).catch((error) => {
           if (error.code === "auth/requires-recent-login") {
             window.alert("Ta akcja wymaga ponownego zalogowania.");
@@ -325,7 +340,7 @@ export class AuthService {
     }
   }
   private deleteUserFromDB(localStorageUserEmail) {
-    // GET: po email lub uuid
+    // DELETE: po email lub uuid
     const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.serverUrl}/users/`);
     result$.subscribe(
       value => {
@@ -337,5 +352,55 @@ export class AuthService {
         }
       },
       error => console.error("log DeleteUser(): ", error));
+  }
+
+  UpdateProfile(profileCredentials: ProfileCredentials) {
+    let dispName = profileCredentials.name;
+    if (profileCredentials.surname) {
+      dispName += ` ${profileCredentials.surname}`;
+    }
+    const userRef: AngularFirestoreDocument<AppUser> = this.db.collection('users').doc(this.getFuser.uid);
+
+    this.getFuser.updateProfile({
+      displayName: dispName,
+      // photoURL: "https://example.com/jane-q-user/profile.jpg",
+    }).then(
+      () => {
+
+        userRef.update({
+          displayName: dispName,
+          // image: ""
+          phoneNumber: profileCredentials.phoneNumber,
+          city: profileCredentials.city
+
+        }).then(
+          () => {
+
+            let appUserTemp = JSON.parse(localStorage.getItem('doc_user')) as AppUser;
+            appUserTemp.displayName = dispName;
+            appUserTemp.phoneNumber = profileCredentials.phoneNumber;
+            appUserTemp.city = profileCredentials.city;
+            localStorage.setItem('doc_user', JSON.stringify(appUserTemp));
+
+            window.alert("Aktualizacja profilu zakończona sukcesem :)");
+
+          }
+        );
+      }
+    ).catch((err) => console.error("[auth.service] UpdateProfile(): ", JSON.stringify(err)));
+
+
+    // userRef.update({
+    //   displayName: dispName,
+    //   // image: ""
+    //   phoneNumber: profileCredentials.phoneNumber,
+    //   city: profileCredentials.city
+    // });
+
+    // let appUserTemp = JSON.parse(localStorage.getItem('doc_user')) as AppUser;
+    // appUserTemp.displayName = dispName;
+    // appUserTemp.phoneNumber = profileCredentials.phoneNumber;
+    // appUserTemp.city = profileCredentials.city;
+    // localStorage.setItem('doc_user', JSON.stringify(appUserTemp));
   }
 }

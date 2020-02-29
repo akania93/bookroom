@@ -62,7 +62,7 @@ export class SignInComponent implements OnInit {
         });
 
     } else {
-      console.warn("Nieznana metoda logowania");
+      console.error("SignIn.component: Nieznana metoda logowania");
     }
   }
 

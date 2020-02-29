@@ -51,7 +51,21 @@
             <li *ngIf="currentUser" class="nav-item avatar dropdown" dropdown>
                 <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light"
                     mdbWavesEffect>
-                    <img [src]="photoUrl" alt="" width="55" height="55" class="img-fluid rounded-circle z-depth-0 mr-2">
+
+
+                    <!-- <img [src]="photoUrl" alt="" width="55" height="55" class="img-fluid rounded-circle z-depth-0 mr-2"> -->
+                    <!-- #region image -->
+                    <img *ngIf="!isImageLoading && imageToShow; else noImageFound" [src]="imageToShow"
+                        class="img-fluid rounded-circle z-depth-0 mr-2" width="55" height="55" alt="">
+                    <ng-template #noImageFound>
+                        <img [src]="emptyPhotoURL" width="55" height="55" alt=""
+                            class="img-fluid rounded-circle z-depth-0 mr-2">
+                    </ng-template>
+                    <!-- #endregion image -->
+
+
+
+
 
                     <!-- {{localStorageUser.displayName !== null ? localStorageUser.displayName : localStorageUser.email}} -->
                     {{currentUser.displayName !== null ? currentUser.displayName : currentUser.email}}
