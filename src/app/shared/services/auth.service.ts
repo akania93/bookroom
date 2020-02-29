@@ -18,9 +18,9 @@ export interface Credentials {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
-  fuserData: any; // Save logged in user data
-  userData: any; // Save logged in user data
-  fuserDoc: any; // Save logged in user data
+  fuser: any; // Save logged in user data
+  fuserDbData: any;
+  appUser: any;
   serverUrl: string = "http://localhost:3000";
 
 
@@ -28,46 +28,45 @@ export class AuthService {
     private fireAuth: AngularFireAuth,
     private router: Router,
     private http: HttpClient,
-    private db: AngularFirestore, // Inject Firestore service
+    private db: AngularFirestore,
     public ngZone: NgZone // NgZone service to remove outside scope warning
   ) {
     /* Saving user data in localstorage when 
         logged in and setting up null when logged out */
     this.fireAuth.authState.subscribe(authUser => {
       if (authUser) {
-        var authUserstringify = JSON.stringify(authUser);
-        
-        this.fuserData = authUserstringify;
+        const authUserstringify = JSON.stringify(authUser);
+        this.fuser = authUserstringify;
         localStorage.setItem('f_user', authUserstringify);
-        this.userData = this.mapFirebaseAuthUserToAppUser(authUser);
-        localStorage.setItem('user', JSON.stringify(this.userData));
+        this.appUser = this.mapFirebaseAuthUserToAppUser(authUser);
+        localStorage.setItem('app_user', JSON.stringify(this.appUser));
 
         this.db.collection('users').doc(authUser.uid).valueChanges()
           .subscribe(value => {
-            this.fuserDoc = value;
-            // localStorage.setItem('fuserDoc', JSON.stringify(value));
+            this.fuserDbData = value;
+            localStorage.setItem('fuserDbData', JSON.stringify(value));
           });
       } else {
         localStorage.setItem('f_user', null);
-        localStorage.setItem('user', null);
-        // localStorage.setItem('userDoc', null);
+        localStorage.setItem('app_user', null);
+        localStorage.setItem('fuserDbData', null);
       }
     });
   }
 
-  get user(): User | null {
+  get getFuser(): User | null {
     return this.fireAuth.auth.currentUser;
   }
-  get localStorageUser(): AppUser | null {
-    return JSON.parse(localStorage.getItem('user'));
+  get getLocalStorageAppUser(): AppUser | null {
+    return JSON.parse(localStorage.getItem('app_user'));
   }
-  get providerId() {
-    var appUser: AppUser = JSON.parse(localStorage.getItem('user'));
+  get getProviderId() {
+    var appUser: AppUser = JSON.parse(localStorage.getItem('app_user'));
     return appUser.providerId;
   }
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('app_user'));
     return (user !== null && user.email !== null) ? true : false;
   }
 
@@ -235,7 +234,6 @@ export class AuthService {
   logout(routing = '/') {
     return this.fireAuth.auth.signOut()
       .then(() => {
-        localStorage.removeItem('user');
         this.router.navigate([routing]);
       }).catch((error) => {
         console.error("log: ", JSON.stringify(error));
@@ -310,7 +308,7 @@ export class AuthService {
 
   DeleteUser() {
     let decision = window.confirm("Napewno?");
-    const localStorageUserEmail = this.localStorageUser.email;
+    const localStorageUserEmail = this.getLocalStorageAppUser.email;
 
     if (decision) {
       return this.fireAuth.auth.currentUser.delete()

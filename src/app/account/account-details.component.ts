@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class AccountDetailsComponent implements OnInit {
 
-  localStorageUser: AppUser = this.authService.localStorageUser;
+  localStorageAppUser: AppUser = this.authService.getLocalStorageAppUser;
   city; // TODO: trzeba obsłużyć
 
   errorMessage;
@@ -33,7 +33,7 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   updatePassword() {
-    let prvoviderId = this.authService.providerId;
+    let prvoviderId = this.authService.getProviderId;
     if (prvoviderId === "password") {
       if (this.password_credentials.password === this.password_credentials.confirmPassword) {
         this.authService.ChangePassword(this.password_credentials.password);
@@ -44,7 +44,7 @@ export class AccountDetailsComponent implements OnInit {
       this.errorMessage = `Ten email jest już używany dla metody logowania: ${prvoviderId}. Nie możesz zresetować hasła.`;
     }
 
-    // var localUserEmail = this.authService.localStorageUser.email;
+    // var localUserEmail = this.authService.getLocalStorageAppUser.email;
     // const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.authService.serverUrl}/users/`);
     // result$.subscribe(
     //   value => {
@@ -57,15 +57,15 @@ export class AccountDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.authService.providerId !== "password") {
+    if (this.authService.getProviderId !== "password") {
       this.passwordChangeDisabled = true;
     }
 
     this.profileCredentials = {
-      name: this.localStorageUser.displayName.split(' ')[0],
-      surname: this.localStorageUser.displayName.split(' ')[1],
-      email: this.localStorageUser.email,
-      phoneNumber: this.localStorageUser.phoneNumber,
+      name: this.localStorageAppUser.displayName.split(' ')[0],
+      surname: this.localStorageAppUser.displayName.split(' ')[1],
+      email: this.localStorageAppUser.email,
+      phoneNumber: this.localStorageAppUser.phoneNumber,
       city: null
     };
   }

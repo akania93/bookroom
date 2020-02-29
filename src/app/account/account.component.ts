@@ -15,7 +15,7 @@ import { ImageService } from '../shared/services/image.service';
 export class AccountComponent implements OnInit {
 
   currentUser: User;
-  localStorageUser = this.authService.localStorageUser;
+  localStorageAppUser = this.authService.getLocalStorageAppUser;
 
   emptyPhotoURL = "assets/image/facebook-profile-photo.jpg";
   imageToShow: any;
