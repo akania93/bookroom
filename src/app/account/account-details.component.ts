@@ -30,7 +30,16 @@ export class AccountDetailsComponent implements OnInit {
 
   updatePassword() {
     if (this.passwordCredentials.password === this.passwordCredentials.confirmPassword) {
-      this.authService.ChangePassword(this.passwordCredentials.password);
+      this.authService.ChangePassword(this.passwordCredentials.password)
+        .catch((err) => {
+          switch (err.code) {
+            case "auth/weak-password":
+              this.errorMessage = "Hasło powinno mieć co najmniej 6 znaków";
+              break;
+            default:
+              this.errorMessage = err.message;
+          }
+        });
     } else {
       this.errorMessage = "Hasła nie są identyczne."
     }

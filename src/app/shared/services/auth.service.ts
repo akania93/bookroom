@@ -316,21 +316,48 @@ export class AuthService {
     });
   }
 
+  // DeleteUser() {
+  //   let decision = window.confirm("Napewno?");
+  //   const uid = this.getLocalStorageAppUser.uid;
+
+  //   const userRef: AngularFirestoreDocument<AppUser> = this.db.collection('users').doc(uid);
+
+  //   if (decision) {
+  //     return this.fireAuth.auth.currentUser.delete()
+  //       .then(() => {
+  //         //this.deleteUserFromDB(email);
+  //         userRef.delete()
+  //           .then(() => this.logout());
+  //       }).catch((error) => {
+  //         if (error.code === "auth/requires-recent-login") {
+  //           window.alert("Ta akcja wymaga ponownego zalogowania.");
+  //           this.logout("/sign");
+  //         }
+  //         console.error("DeleteUser log: ", JSON.stringify(error));
+  //       });
+  //   }
+  // }
   DeleteUser() {
     let decision = window.confirm("Napewno?");
     const uid = this.getLocalStorageAppUser.uid;
 
     const userRef: AngularFirestoreDocument<AppUser> = this.db.collection('users').doc(uid);
 
+    this.fireAuth.auth.currentUser.reload();
+
     if (decision) {
-      return this.fireAuth.auth.currentUser.delete()
+      return this.fireAuth.auth.currentUser.reload()
         .then(() => {
-          //this.deleteUserFromDB(email);
 
           userRef.delete()
-          .then(() => this.logout());
 
-        }).catch((error) => {
+            .then(() => {
+
+              this.fireAuth.auth.currentUser.delete()
+                .then(() => this.logout());
+            });
+        })
+        .catch((error) => {
           if (error.code === "auth/requires-recent-login") {
             window.alert("Ta akcja wymaga ponownego zalogowania.");
             this.logout("/sign");
