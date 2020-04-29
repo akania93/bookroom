@@ -24,8 +24,8 @@ export class AccountDetailsComponent implements OnInit {
   };
 
   constructor(
+    public authService: AuthService,
     private router: Router,
-    private authService: AuthService,
     private http: HttpClient) { }
 
   updatePassword() {
@@ -33,20 +33,20 @@ export class AccountDetailsComponent implements OnInit {
       this.authService.ChangePassword(this.passwordCredentials.password)
         .catch((err) => {
           switch (err.code) {
-            case "auth/weak-password":
-              this.errorMessage = "Hasło powinno mieć co najmniej 6 znaków";
+            case 'auth/weak-password':
+              this.errorMessage = 'Hasło powinno mieć co najmniej 6 znaków';
               break;
             default:
               this.errorMessage = err.message;
           }
         });
     } else {
-      this.errorMessage = "Hasła nie są identyczne."
+      this.errorMessage = 'Hasła nie są identyczne.';
     }
   }
 
   ngOnInit() {
-    if (this.authService.getProviderId === "password") {
+    if (this.authService.getProviderId === 'password') {
       this.passwordChangeEnabled = true;
     }
 

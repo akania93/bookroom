@@ -8,29 +8,32 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'bookr-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styles: []
+  styles: [],
 })
 export class ForgotPasswordComponent implements OnInit {
-
   errorMessage;
-  
-  constructor(
-    private router: Router, 
-    private authService: AuthService,
-    private http: HttpClient) { }
 
-  ngOnInit() {
-  }
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit() {}
 
   // Użycie dla użytkownika w Api DB
   // TODO: jak zdecyduję się na firestore to usunąć to
   forgotPassword(passwordResetEmail) {
     // Trzeba pobrac providerId z api. Teraz muszę przeszukać całą listę.
-    // TODO: Ale w api będzie już metoda na to prostsza. 
-    const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(`${this.authService.serverUrl}/users/`);
+    // TODO: Ale w api będzie już metoda na to prostsza.
+    const result$: Observable<AppUser[]> = this.http.get<AppUser[]>(
+      `${this.authService.serverUrl}/users/`
+    );
     result$.subscribe(
-      value => {
-        const appUser = value.filter(item => item.email === passwordResetEmail)[0];
+      (value) => {
+        const appUser = value.filter(
+          (item) => item.email === passwordResetEmail
+        )[0];
         if (appUser !== undefined) {
           if (appUser.providerId === "password") {
             this.authService.ResetPassword(passwordResetEmail);
@@ -41,7 +44,7 @@ export class ForgotPasswordComponent implements OnInit {
           this.errorMessage = "Konto nie istnieje.";
         }
       },
-      error => this.errorMessage = error);
+      (error) => (this.errorMessage = error)
+    );
   }
-
 }
